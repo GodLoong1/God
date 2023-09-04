@@ -26,4 +26,7 @@ int main()
     god::ObjectMap::GetSingleInstance<三月七>()->show();
     god::ObjectMap::GetSingleInstance<饮月>()->show();
     god::ObjectMap::GetSingleInstance<八重神子>()->show();
+
+    auto ptr = god::ObjectMap::GetSingleInstance(雷神::ClassTypeName());
+    std::cout << ptr->className() << std::endl;
 }

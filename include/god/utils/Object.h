@@ -1,6 +1,7 @@
 #ifndef GOD_UTILS_OBJECT_H
 #define GOD_UTILS_OBJECT_H
 
+#include <stdexcept>
 #include <string>
 #include <memory>
 #include <functional>
@@ -15,6 +16,8 @@ class ObjectBase
 {
 public:
     virtual ~ObjectBase() noexcept = default;
+
+    virtual const std::string& className() const noexcept = 0;
 };
 
 using ObjectBasePtr = std::shared_ptr<ObjectBase>;
@@ -56,7 +59,12 @@ class Object : public virtual ObjectBase
 public:
     static const std::string& ClassTypeName() noexcept
     {
-        return alloc_.className();
+        return allocRegister_.className();
+    }
+
+    const std::string& className() const noexcept override
+    {
+        return ClassTypeName();
     }
 
 protected:
@@ -80,16 +88,16 @@ private:
         }
     };
 
-    virtual void* allocInstance() noexcept final
+    virtual void* allocRegisterInstance() noexcept final
     {
-        return &alloc_;
+        return &allocRegister_;
     }
 
-    static AllocRegister alloc_;
+    static AllocRegister allocRegister_;
 };
 
 template<typename T>
-typename Object<T>::AllocRegister Object<T>::alloc_;
+typename Object<T>::AllocRegister Object<T>::allocRegister_;
 
 } // namespace god
 
