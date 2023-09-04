@@ -4,6 +4,7 @@
 #include <mariadb/mysql.h>
 #include <iostream>
 #include <memory>
+#include <type_traits>
 
 god::ResultPtr getResult()
 {
@@ -21,17 +22,5 @@ god::ResultPtr getResult()
 
 int main()
 {
-    god::ResultPtr result = getResult();
-
-    for (const god::Row& row : *result)
-    {
-        LOG_INFO << "id: " << row["id"].as<const char*>()
-                 << ", workno: " << row["workno"].as<int>()
-                 << ", name: " << row["name"].as<std::string_view>()
-                 << ", gender: " << row["gender"].as<std::string>()
-                 << ", age: " << row["age"].as<double>()
-                 << ", idcard: " << row["idcard"].as<size_t>()
-                 << ", workaddress: " << row["workaddress"].as<std::string>()
-                 << ", entrydate: " << row["entrydate"].as();
-    }
+    std::cout << std::is_same_v<decltype(("")), const char(&)[1]> << std::endl;
 }

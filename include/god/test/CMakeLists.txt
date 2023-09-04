@@ -26,4 +26,4 @@ add_executable(CacheMap_test CacheMap_test.cpp)
 target_link_libraries(CacheMap_test god)
 
 add_executable(Test Test.cpp)
-target_link_libraries(Test god)
+target_link_libraries(Test)

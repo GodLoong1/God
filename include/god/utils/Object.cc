@@ -4,13 +4,14 @@
 #include <cstdlib>
 #include <mutex>
 #include <cassert>
+#include <unordered_map>
 
 namespace god
 {
 
 /// 获取分配函数
 static std::unordered_map<std::string, SharedAllocFunc>&
-getAllocMap()
+getAllocMap() noexcept
 {
     static std::unordered_map<std::string, SharedAllocFunc> allocMap_;
     return allocMap_;
@@ -18,53 +19,26 @@ getAllocMap()
 
 // 获取类实例
 static std::unordered_map<std::string, ObjectBasePtr>&
-getObjMap()
+getObjMap() noexcept
 {
     static std::unordered_map<std::string, ObjectBasePtr> instanceMap_;
     return instanceMap_;
 }
 
 // 获取锁
-static std::mutex& getObjMutex()
+static std::mutex& getObjMutex() noexcept
 {
     static std::mutex mutex;
     return mutex;
 }
 
 void ObjectMap::RegisterClass(const std::string& className,
-                              SharedAllocFunc&& func)
+                              SharedAllocFunc&& func) noexcept
 {
     getAllocMap().emplace(className, std::move(func));
 }
 
-ObjectBasePtr
-ObjectMap::NewSharedObject(const std::string& className)
-{
-    auto iter = getAllocMap().find(className);
-    assert(iter != getAllocMap().end());
-    return iter->second();
-}
-
-const ObjectBasePtr&
-ObjectMap::GetSingleInstance(const std::string& className)
-{
-    auto& mutex = getObjMutex();
-    auto& map = getObjMap();
-    {
-        std::lock_guard<std::mutex> lock(mutex);
-        if (auto iter = map.find(className); iter != map.end())
-            return iter->second;
-    }
-    auto newObj = NewSharedObject(className);
-    {
-        std::lock_guard<std::mutex> lock(mutex);
-        auto ret = map.emplace(className, std::move(newObj));
-        return ret.first->second;
-    }
-}
-
-// 获取typeid.name的类名
-std::string ObjectMap::Demangle(const char* mangledName)
+std::string ObjectMap::Demangle(const char* mangledName) noexcept
 {
     size_t len = 0;
     int status = 0;
@@ -76,8 +50,29 @@ std::string ObjectMap::Demangle(const char* mangledName)
     return std::string(ptr.get());
 }
 
-// 获取所有注册的类名
-std::vector<std::string> ObjectMap::GetAllClassName()
+const ObjectBasePtr&
+ObjectMap::GetSingleInstance(const std::string& className) noexcept
+{
+    auto& mutex = getObjMutex();
+    auto& map = getObjMap();
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        if (auto iter = map.find(className); iter != map.end())
+            return iter->second;
+    }
+
+    auto iter = getAllocMap().find(className);
+    assert(iter != getAllocMap().end());
+    auto obj = iter->second();
+
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        auto ret = map.emplace(className, std::move(obj));
+        return ret.first->second;
+    }
+}
+
+std::vector<std::string> ObjectMap::GetAllClassName() noexcept
 {
     std::vector<std::string> ret;
     ret.reserve(getAllocMap().size());

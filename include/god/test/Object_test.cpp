@@ -1,4 +1,3 @@
-#include "god/http/HttpController.h"
 #include "god/utils/Object.h"
 
 #include <iostream>
@@ -8,21 +7,20 @@ using namespace god;
 
 class TestA : public Object<TestA>
 {
+public:
+    TestA() { }
 };
 
 class TestB : public Object<TestB>
 {
+public:
+    TestB() { }
 };
 
 int main()
 {
-    // TestA::ClassTypeName();
-    // TestB::ClassTypeName();
-
-    std::cout << "AllClassName start" << std::endl;
-    for (const auto& name : ObjectMap::GetAllClassName())
+    for (auto& str : ObjectMap::GetAllClassName())
     {
-        std::cout << name << std::endl;
+        std::cout << "register: " << str << std::endl;
     }
-    std::cout << "AllClassName end" << std::endl;
 }

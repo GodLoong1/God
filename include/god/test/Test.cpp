@@ -1,19 +1,31 @@
-#include "Test.h"
+#include <stdio.h>
+#include <sys/types.h>
 
-class Dog : public Controller<Dog>
+template<typename T>
+class Controller
 {
-public:
-    METHOD_LIST_BEGIN
-    METHOD_ADD
-    METHOD_LIST_END
-
-    Dog()
+private:
+    static struct MethodRegister
     {
-        LOG_INFO << "Dog()";
+        MethodRegister()
+        {
+            printf("MethodRegister\n");
+        }
+    } register_;
+
+    virtual void touch()
+    {
+        (void)register_;
     }
 };
 
-int main()
+template<typename T>
+typename Controller<T>::MethodRegister Controller<T>::register_;
+
+class MyContorller : public Controller<MyContorller>
 {
-    [[maybe_unused]] auto p = Dog::register_;
-}
+public:
+    MyContorller() { }
+};
+
+int main() { }

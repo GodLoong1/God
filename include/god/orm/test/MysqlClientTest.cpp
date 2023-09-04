@@ -5,7 +5,7 @@
 #include <future>
 #include <unistd.h>
 
-static constexpr int count = 1;
+static constexpr int count = 100;
 
 std::promise<void> promise;
 std::future<void> future = promise.get_future();
@@ -32,7 +32,7 @@ int main()
     GOD_LOG->setLevel(god::LogLevel::info);
 
     god::DbClientManager manager;
-    manager.addDbClient(god::DbClientType::Mysql, "localhost", 3306, "book", "root", "xL20010824!", 1, 3, "mysql", "utf8");
+    manager.addDbClient(god::DbClientType::Mysql, "localhost", 3306, "book", "root", "xL20010824!", 1, 3, "mysql", "");
     manager.startDbClient();
     auto db = manager.getDbClient("mysql");
 
@@ -40,7 +40,7 @@ int main()
 
     for (int i = 0; i != count; ++i)
     {
-        db->execSqlAsync("select * from emp; select * from exception!!!!", queryFunc, ExceptFunc);
+        db->execSqlAsync("select * from emp;", queryFunc, ExceptFunc);
     }
     LOG_INFO << "end";
 
