@@ -188,6 +188,12 @@ void MysqlConnection::realConnectStart()
                                            CLIENT_MULTI_STATEMENTS);
     LOG_TRACE << "mysql_real_connect_start: " << waitStatus_;
 
+    auto fd = mysql_get_socket(mysql_.get());
+    if (fd < 0)
+    {
+        LOG_FATAL << "mysql_get_socket error";
+    }
+
     channel_.reset(new Channel(loop_, mysql_get_socket(mysql_.get())));
     channel_->setEventCallback([this] { handleEvent(); });
 

@@ -1,4 +1,6 @@
 #include "god/http/HttpController.h"
+#include "god/net/EventLoop.h"
+#include "god/orm/Result.h"
 #include "god/utils/Logger.h"
 #include <exception>
 #include <stdexcept>
@@ -26,6 +28,19 @@ public:
     void test(const HttpRequestPtr&, HttpResponseHandler&&, int )
     {
         auto db = app().getDbClient("mysql");
+
+        db->execSqlAsync("select * from emp", [](const ResultPtr& result) {
+            for (auto& row : *result)
+            {
+                std::string str;
+                for (auto& field : row)
+                {
+                    str = str + field.name() + ":" + field.as() + " ";
+                }
+                str.pop_back();
+                LOG_INFO << str;
+            }
+        });
     }
 };
 
