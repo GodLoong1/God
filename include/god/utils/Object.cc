@@ -68,6 +68,7 @@ ObjectMap::GetSingleInstance(const std::string& className) noexcept
     {
         std::lock_guard<std::mutex> lock(mutex);
         auto ret = map.emplace(className, std::move(obj));
+        assert(ret.second);
         return ret.first->second;
     }
 }
