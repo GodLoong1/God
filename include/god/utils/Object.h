@@ -68,7 +68,7 @@ public:
     }
 
 protected:
-    Object() = default;
+    Object() noexcept = default;
 
 private:
     struct AllocRegister

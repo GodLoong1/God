@@ -15,7 +15,7 @@ namespace god
     static void InitPathRouting() \
     {
 #define METHOD_ADD(function, pattern, ...) \
-    registerMethod(&function, pattern, {__VA_ARGS__})
+    RegisterMethod(&function, pattern, {__VA_ARGS__})
 #define METHOD_LIST_END \
     }
 
@@ -25,12 +25,10 @@ class HttpController : public Object<T>
 {
 protected:
     template<typename Func>
-    static void registerMethod(Func&& function,
+    static void RegisterMethod(Func&& function,
                                const std::string& pattern,
                                const std::vector<HttpMethod>& methods)
     {
-        LOG_INFO << "registerMethod()";
-        // 没有这行一样实例化
         app().registerHandler(pattern,
                               std::forward<Func>(function),
                               methods);
@@ -41,25 +39,20 @@ private:
     {
         MethodRegister()
         {
-            LOG_INFO << "MethodRegister()";
             T::InitPathRouting();
         }
     };
 
-    static MethodRegister register_;
+    static MethodRegister methodRegister_;
 
-    /**
-     * @brief 实例化
-     */
-    virtual void* touch()
+    virtual void* methodRegisterInstance() noexcept final
     {
-        LOG_INFO << "touch()";
-        return &register_;
+        return &methodRegister_;
     }
 };
 
 template<typename T>
-typename HttpController<T>::MethodRegister HttpController<T>::register_;
+typename HttpController<T>::MethodRegister HttpController<T>::methodRegister_;
 
 } // namespace god
 

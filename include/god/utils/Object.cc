@@ -65,12 +65,10 @@ ObjectMap::GetSingleInstance(const std::string& className) noexcept
     assert(iter != getAllocMap().end());
     auto obj = iter->second();
 
-    {
-        std::lock_guard<std::mutex> lock(mutex);
-        auto ret = map.emplace(className, std::move(obj));
-        assert(ret.second);
-        return ret.first->second;
-    }
+    std::lock_guard<std::mutex> lock(mutex);
+    auto ret = map.emplace(className, std::move(obj));
+    assert(ret.second);
+    return ret.first->second;
 }
 
 std::vector<std::string> ObjectMap::GetAllClassName() noexcept

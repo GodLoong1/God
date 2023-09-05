@@ -14,6 +14,7 @@ MakeClass(饮月)
 MakeClass(三月七)
 MakeClass(雷神)
 MakeClass(八重神子)
+MakeClass(星)
 
 int main()
 {
@@ -27,6 +28,6 @@ int main()
     god::ObjectMap::GetSingleInstance<饮月>()->show();
     god::ObjectMap::GetSingleInstance<八重神子>()->show();
 
-    auto ptr = god::ObjectMap::GetSingleInstance(雷神::ClassTypeName());
+    auto ptr = god::ObjectMap::GetSingleInstance("星");
     std::cout << ptr->className() << std::endl;
 }
