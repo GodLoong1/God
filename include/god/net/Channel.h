@@ -143,7 +143,7 @@ private:
     std::string toString(uint32_t ev) const noexcept;
 
     EventLoop* loop_;
-    int fd_;
+    const int fd_;
 
     std::weak_ptr<void> tie_;
     bool tied_{false};

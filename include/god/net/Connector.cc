@@ -3,9 +3,7 @@
 #include <cassert>
 
 #include "god/utils/Logger.h"
-#include "god/net/EventLoop.h"
 #include "god/net/Socket.h"
-#include "god/net/Channel.h"
 
 namespace god
 {

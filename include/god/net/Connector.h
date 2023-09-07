@@ -7,12 +7,11 @@
 #include "god/utils/NonCopyable.h"
 #include "god/net/InetAddress.h"
 #include "god/net/Timer.h"
+#include "god/net/EventLoop.h"
+#include "god/net/Channel.h"
 
 namespace god
 {
-
-class EventLoop;
-class Channel;
 
 /// 发起Tcp连接
 class Connector : NonCopyable
