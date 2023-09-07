@@ -115,8 +115,6 @@ void TcpServer::newConnection(int sockfd, const InetAddress& peerAddr) noexcept
 
     conn->init();
     connSet_.emplace(std::move(conn));
-
-    LOG_INFO << "在线tcp连接数量: " << connSet_.size();
 }
 
 void TcpServer::removeConnection(const TcpConnectionPtr& conn) noexcept
@@ -133,7 +131,6 @@ void TcpServer::removeConnection(const TcpConnectionPtr& conn) noexcept
             assert(n == 1);
         });
     }
-    LOG_INFO << "在线tcp连接数量: " << connSet_.size();
 }
 
 } // namespace god

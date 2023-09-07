@@ -6,13 +6,12 @@
 
 #include "god/utils/NonCopyable.h"
 #include "god/net/Socket.h"
+#include "god/net/EventLoop.h"
+#include "god/net/InetAddress.h"
+#include "god/net/Channel.h"
 
 namespace god
 {
-
-class EventLoop;
-class InetAddress;
-class Channel;
 
 /// 接受Tcp连接
 class Acceptor : NonCopyable
@@ -35,7 +34,7 @@ public:
     void listen() noexcept;
 
 private:
-    void handleRead() noexcept;
+    void handleNewConnection() noexcept;
 
     EventLoop* loop_;
     int idlefd_;

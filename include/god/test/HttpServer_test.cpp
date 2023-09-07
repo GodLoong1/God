@@ -3,11 +3,13 @@
 #include "god/orm/Result.h"
 #include "god/utils/Logger.h"
 #include <exception>
+#include <memory>
 #include <stdexcept>
 
 using namespace god;
 
-class MyController : public HttpController<MyController>
+class MyController : public HttpController<MyController>,
+                     public std::enable_shared_from_this<MyController>
 {
 public:
     METHOD_LIST_BEGIN
@@ -25,22 +27,27 @@ public:
         app().quit();
     }
 
-    void test(const HttpRequestPtr&, HttpResponseHandler&&, int )
+    void test(const HttpRequestPtr&, HttpResponseHandler&&, int)
     {
         auto db = app().getDbClient("mysql");
 
-        db->execSqlAsync("select * from emp", [](const ResultPtr& result) {
-            for (auto& row : *result)
-            {
-                std::string str;
-                for (auto& field : row)
-                {
-                    str = str + field.name() + ":" + field.as() + " ";
-                }
-                str.pop_back();
-                LOG_INFO << str;
-            }
+        db->execSqlAsync("select * from emp", [this] (const ResultPtr& result) {
+            output(result);
         });
+    }
+
+    void output(const ResultPtr& result)
+    {
+        for (auto& row : *result)
+        {
+            std::string str;
+            for (auto& field : row)
+            {
+                str = str + field.name() + ":" + field.as() + " ";
+            }
+            str.pop_back();
+            LOG_INFO << str;
+        }
     }
 };
 

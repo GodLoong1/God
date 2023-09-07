@@ -28,30 +28,36 @@ public:
     void execSql(SqlBinderPtr&& binder) override;
 
 private:
-    class MysqlEnv
+    struct MysqlEnv
     {
-    public:
-        MysqlEnv()
+        MysqlEnv() noexcept
         {
             mysql_library_init(0, nullptr, nullptr);
         }
-        ~MysqlEnv()
+        ~MysqlEnv() noexcept
         {
             mysql_library_end();
         }
     };
 
-    class MysqlThreadEnv
+    struct MysqlThreadEnv
     {
-    public:
-        MysqlThreadEnv()
+        MysqlThreadEnv() noexcept
         {
             mysql_thread_init();
         }
-        ~MysqlThreadEnv()
+        ~MysqlThreadEnv() noexcept
         {
             mysql_thread_end();
         }
+    };
+
+    enum class ExecStatus
+    {
+        None,
+        RealQuery,
+        StoreResult,
+        NextResult,
     };
 
     void execSqlInLoop(SqlBinderPtr&& binder);
@@ -91,14 +97,6 @@ private:
     void execError(const char* func);
 
 private:
-    enum class ExecStatus
-    {
-        None,
-        RealQuery,
-        StoreResult,
-        NextResult,
-    };
-
     std::shared_ptr<MYSQL> mysql_;
     std::unique_ptr<Channel> channel_;
     int waitStatus_{0};

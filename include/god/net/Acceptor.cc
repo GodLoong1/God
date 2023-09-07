@@ -6,9 +6,6 @@
 #include <cassert>
 
 #include "god/utils/Logger.h"
-#include "god/net/EventLoop.h"
-#include "god/net/InetAddress.h"
-#include "god/net/Channel.h"
 
 namespace god
 {
@@ -29,7 +26,7 @@ Acceptor::Acceptor(EventLoop* loop,
     socket_.setReusePort(reusePort);
     socket_.bind(listenAddr);
 
-    channel_->setReadCallback([this] { handleRead(); });
+    channel_->setReadCallback([this] { handleNewConnection(); });
 }
 
 Acceptor::~Acceptor() noexcept
@@ -52,7 +49,7 @@ void Acceptor::listen() noexcept
     channel_->enableReading();
 }
 
-void Acceptor::handleRead() noexcept
+void Acceptor::handleNewConnection() noexcept
 {
     loop_->assertInLoop();
 
