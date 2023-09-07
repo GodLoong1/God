@@ -3,9 +3,6 @@
 #include <cassert>
 
 #include "god/utils/Logger.h"
-#include "god/net/EventLoop.h"
-#include "god/net/Channel.h"
-#include "god/net/TimerWheel.h"
 
 namespace god
 {
@@ -45,18 +42,6 @@ void TcpConnection::init() noexcept
 
         self->connectionCallback_(self);
     });
-}
-
-void TcpConnection::setTimeoutOff(
-    size_t timeout,
-    const std::shared_ptr<TimerWheel>& timerWheel) noexcept
-{
-    auto entry = std::make_shared<OffEntry>(weak_from_this());
-    timerWheel->insertEntry(timeout, entry);
-
-    offEntry_ = entry;
-    timerWheel_ = timerWheel;
-    timeout_ = timeout;
 }
 
 void TcpConnection::shutdown() noexcept

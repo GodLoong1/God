@@ -10,13 +10,12 @@
 #include "god/net/InetAddress.h"
 #include "god/net/Socket.h"
 #include "god/net/TcpBuffer.h"
+#include "god/net/EventLoop.h"
+#include "god/net/Channel.h"
+#include "god/net/TimerWheel.h"
 
 namespace god
 {
-
-class EventLoop;
-class Channel;
-class TimerWheel;
 
 class TcpConnection;
 
@@ -103,9 +102,16 @@ public:
         return std::static_pointer_cast<T>(context_);
     }
 
-    void setTimeoutOff(
-        size_t timeout,
-        const std::shared_ptr<TimerWheel>& timerWheel) noexcept;
+    void setTimeoutOff(size_t timeout,
+                       const std::shared_ptr<TimerWheel>& timerWheel) noexcept
+    {
+        auto entry = std::make_shared<OffEntry>(weak_from_this());
+        timerWheel->insertEntry(timeout, entry);
+
+        offEntry_ = entry;
+        timerWheel_ = timerWheel;
+        timeout_ = timeout;
+    }
 
     void shutdown() noexcept;
     void forceClose() noexcept;

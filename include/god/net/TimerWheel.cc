@@ -3,7 +3,6 @@
 #include <cassert>
 
 #include "god/utils/Logger.h"
-#include "god/net/EventLoop.h"
 
 namespace god
 {

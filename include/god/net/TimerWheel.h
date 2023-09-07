@@ -9,11 +9,10 @@
 
 #include "god/utils/NonCopyable.h"
 #include "god/net/Timer.h"
+#include "god/net/EventLoop.h"
 
 namespace god
 {
-
-class EventLoop;
 
 /// 时间轮
 class TimerWheel : NonCopyable 
